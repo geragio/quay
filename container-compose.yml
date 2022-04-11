@@ -1,0 +1,40 @@
+version: "3.7"
+services:
+
+  quay-db:
+    container_name: quay-db
+    image: registry.redhat.io/rhel8/postgresql-10:1
+    environment:
+      POSTGRES_USER: "quay"
+      POSTGRES_PASSWORD: "quay"
+      POSTGRES_DB: "quay"
+    volumes:
+      - "/opt/postgres-quay:/var/lib/pgsql/data:Z"
+    ports:
+      - "127.0.0.1:5432:5432"
+
+  clair-db:
+    container_name: clair-db
+    image: registry.redhat.io/rhel8/postgresql-10:1
+    environment:
+      POSTGRES_USER: "clair"
+      POSTGRES_DB: "clair"
+    volumes:
+      - "/opt/postgres-clair:/var/lib/pgsql/data:Z"
+    ports:
+      - "5433:5432"
+
+  redis:
+    container_name: quay-redis
+    image: registry.redhat.io/rhel8/redis-5:1
+    ports:
+      - "127.0.0.1:6379:6379"
+
+  quay_config:
+    container_name: quay_config
+    image: registry.redhat.io/quay/quay-rhel8:v3.6.4
+    ports:
+      - "8080:8080" 
+      - "8443:8443"
+    command:
+      ["config", "secret1234"]
